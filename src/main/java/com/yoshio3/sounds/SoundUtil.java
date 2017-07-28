@@ -28,33 +28,30 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *  Microsoft Translator will receive the Sound Data as follows.
- * 
- *  In order to convert the sound data, this class will be used.
- * 
- *  SamplRate   : 16KHz
- *  Bit/Sample  : 16
- *  Chanel(mono): 1
- * 
+ * Microsoft Translator will receive the Sound Data as follows.
+ *
+ * In order to convert the sound data, this class will be used.
+ *
+ * SamplRate : 16KHz Bit/Sample : 16 Chanel(mono): 1
+ *
  * @author Yoshio Terada
  */
 public class SoundUtil {
-    
+
     private final static int FORMAT_CHUNK_SIZE = 16;
     private final static int FORMAT = 1;
     private final static int CHANNEL = 1; //mono:1 stereo:2
     private final static int SAMPLERATE = 16000;
     private final static int BIT_PER_SAMPLE = 16;
-    
+
     /**
      * Convert the Sampling Data, Bit/Sample, Mono Channel
-     * 
+     *
      * @param soundBinary original sound binary data
      * @return converted binary sound data
      * @throws UnsupportedAudioFileException
-     * @throws IOException 
+     * @throws IOException
      */
-
     public byte[] convertMonoralSound(byte[] soundBinary) throws UnsupportedAudioFileException, IOException {
         ByteArrayInputStream bais = new ByteArrayInputStream(soundBinary);
         AudioInputStream sourceStream = AudioSystem.getAudioInputStream(bais);
@@ -62,22 +59,19 @@ public class SoundUtil {
         AudioFormat targetFormat = new AudioFormat(16000, 16, 1, true, false);
 
         if (AudioSystem.isConversionSupported(targetFormat, sourceFormat)) {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(targetFormat, sourceStream);
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            byte[] bytes = new byte[1024];
-            int bytesRead = 0;
-            while ((bytesRead = audioInputStream.read(bytes, 0, bytes.length)) != -1) {
-                try {
+            byte[] soundData;
+            try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(targetFormat, sourceStream);
+                    ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+                byte[] bytes = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = audioInputStream.read(bytes, 0, bytes.length)) != -1) {
                     bout.write(bytes, 0, bytesRead);
-                } catch (Exception ex) {
-                    Logger.getLogger(SoundUtil.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                soundData = bout.toByteArray();
             }
-            byte[] soundData = bout.toByteArray();
-            bout.close();
             return createNewSoundBinaryData(soundData);
-        }else{
-            return null;
+        } else {
+            return soundBinary;
         }
     }
 
