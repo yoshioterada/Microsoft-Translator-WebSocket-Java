@@ -1,0 +1,240 @@
+<!--
+. Muaz Khan     - https://github.com/muaz-khan
+. MIT License   - https://www.webrtc-experiment.com/licence/
+. Documentation - https://github.com/streamproc/MediaStreamRecorder
+. =================================================================
+. audio-recorder.html
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>Microsoft Translator by Java</title>
+
+        <script src="https://cdn.WebRTC-Experiment.com/MediaStreamRecorder.js"></script>
+        <!-- for Edige/FF/Chrome/Opera/etc. getUserMedia support -->
+        <script src="https://cdn.WebRTC-Experiment.com/gumadapter.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+        <link rel="stylesheet" href="https://cdn.webrtc-experiment.com/style.css">
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <link rel="author" type="text/html" href="https://plus.google.com/+MuazKhan">
+        <meta name="author" content="Muaz Khan">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+        <style>
+            input {
+                border: 1px solid rgb(46, 189, 235);
+                border-radius: 3px;
+                font-size: 1em;
+                outline: none;
+                padding: .2em .4em;
+                width: 60px;
+                text-align: center;
+            }
+            select {
+                -moz-border-radius: 0.5px;
+                -moz-transition: none;
+                -webkit-transition: none;
+                background: #0370ea;
+                background: -moz-linear-gradient(top, #008dfd 0, #0370ea 100%);
+                background: -webkit-linear-gradient(top, #008dfd 0, #0370ea 100%);
+                border: 0.5px solid #076bd2;
+                border-radius: .5px;
+                color: #fff;
+                display: inline-block;
+                font-family: inherit;
+                font-size: .6em;
+                line-height: 0.5;
+                padding: 5px 5px;
+                text-align: center;
+                text-shadow: 1px 1px 1px #076bd2;
+                font-size: 0.9em;
+            }
+
+            .messages{
+                width:100%;
+                height:480px;
+                overflow:hidden;
+            }
+            .messages:hover{
+                overflow-y:scroll;
+            }
+            .messages > div{
+                padding:15px;
+                border-bottom:1px dashed #999;
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <article>
+            <H1>Microsoft Translator (Voice-to-Text) by Java</H1>
+
+            <section class="experiment" style="padding: 5px;">
+                <input id="left-channel" type="HIDDEN" style="width:auto;">
+                <button id="start-recording">Start</button>
+                <button id="stop-recording" disabled>Stop</button><br><br>
+                FROM:
+                <select id="from-lang" name="from">
+                    <option value="ar-EG">Arabic</option>
+                    <option value="de-DE">German</option>
+                    <option value="es-ES">Spanish</option>
+                    <option value="en-US">English</option>
+                    <option value="fr-FR">French</option>
+                    <option value="it-IT">Italian</option>
+                    <option value="ja-JP" selected>Japanese</option>
+                    <option value="pt-BR">Portuguese</option>
+                    <option value="ru-RU">Russian</option>
+                    <option value="zh-CN">Chinese Simplified</option>
+                    <option value="zh-TW">Chinese Traditional</option>
+                </select>&nbsp;&nbsp;
+                TO:
+                <select id="to-lang" name="to">
+                    <option value="ar-EG">Arabic</option>
+                    <option value="de-DE">German</option>
+                    <option value="es-ES">Spanish</option>
+                    <option value="en-US" selected>English</option>
+                    <option value="fr-FR">French</option>
+                    <option value="it-IT">Italian</option>
+                    <option value="ja-JP">Japanese</option>
+                    <option value="pt-BR">Portuguese</option>
+                    <option value="ru-RU">Russian</option>
+                    <option value="zh-CN">Chinese Simplified</option>
+                    <option value="zh-TW">Chinese Traditional</option>
+
+                </select>                
+            </section>
+
+
+            <section class="experiment">
+                <div id="messages" class="messages">
+                    <div>Result of Real Time Translation</div>
+                    <div id="insertpos" class="insertpos"></div>
+                </div>                
+            </section>
+
+
+            <script>
+                var websocket = null;
+                var mediaRecorder;
+                var timeInterval = 10000;
+
+                function captureUserMedia(mediaConstraints, successCallback, errorCallback) {
+                    navigator.mediaDevices.getUserMedia(mediaConstraints).then(successCallback).catch(errorCallback);
+                }
+                var mediaConstraints = {
+                    audio: true
+                };
+                document.querySelector('#start-recording').onclick = function () {
+                    initWebSocket();
+                    this.disabled = true;
+                    captureUserMedia(mediaConstraints, onMediaSuccess, onMediaError);
+                };
+                document.querySelector('#stop-recording').onclick = function () {
+                    this.disabled = true;
+                    mediaRecorder.stop();
+                    mediaRecorder.stream.stop();
+                    document.querySelector('#start-recording').disabled = false;
+                };
+
+                document.getElementById("from-lang").onchange = function () {
+                    if (websocket !== null) {
+                        websocket.close();
+                        websocket = null;
+                    }
+                };
+
+                document.getElementById("to-lang").onchange = function () {
+                    if (websocket !== null) {
+                        websocket.close();
+                        websocket = null;
+                    }
+                };
+
+                function initWebSocket() {
+                    if (websocket !== null) {
+                        return;
+                    }
+                    var wsUri = "ws://"
+                            + document.location.hostname + ":"
+                            + document.location.port
+                            + document.location.pathname
+                            + 'uploadSoundWebSocketEndpoint/'
+                            + document.querySelector('#from-lang').value + '/'
+                            + document.querySelector('#to-lang').value;
+
+                    websocket = new WebSocket(wsUri);
+                    websocket.binaryType = 'arraybuffer';
+                    websocket.onconnect = function (e) {
+                        console.log('connect:' + e.msg);
+                    };
+                    websocket.onerror = function (e) {
+                        console.log(e.msg);
+                    };
+                    websocket.onclose = function (e) {
+                        console.log('close:' + e.msg);
+                    };
+                    websocket.onmessage = function (e) {
+                        writeToScreen(e);
+                    };
+                }
+
+
+                /* テーブルにメッセージの書き込み */
+                function writeToScreen(event) {
+                    var element = document.createElement('div');
+                    element.className = "message";
+                    var obj = JSON.parse(event.data);
+
+                    element.textContent = obj.origin + ' : ' + obj.translated;
+                    element.style.backgroundColor = "white";
+                    //メッセージの挿入位置（最新情報を先頭に記  載）
+                    var objBody = document.getElementById("insertpos");
+                    objBody.insertBefore(element, objBody.firstChild);
+                    // body要素にdivエレメントを追加 
+                }
+
+
+                function onMediaSuccess(stream) {
+                    var audio = document.createElement('audio');
+
+                    audio = mergeProps(audio, {
+                        controls: true,
+                        muted: true,
+                        src: URL.createObjectURL(stream)
+                    });
+                    audio.play();
+                    mediaRecorder = new MediaStreamRecorder(stream);
+                    mediaRecorder.stream = stream;
+                    mediaRecorder.recorderType = StereoAudioRecorder;
+                    mediaRecorder.mimeType = 'audio/wav';
+                    // don't force any mimeType; use above "recorderType" instead.
+                    // mediaRecorder.mimeType = 'audio/webm'; // audio/ogg or audio/wav or audio/webm
+                    mediaRecorder.audioChannels = !!document.getElementById('left-channel').checked ? 1 : 2;
+                    mediaRecorder.ondataavailable = function (blob) {
+                        // Upload File to Server
+                        websocket.send(blob);
+                    };
+
+                    // get blob after specific time interval
+                    mediaRecorder.start(timeInterval);
+                    document.querySelector('#stop-recording').disabled = false;
+                }
+
+                function onMediaError(e) {
+                    console.error('media error', e);
+                }
+
+                window.onbeforeunload = function () {
+                    document.querySelector('#start-recording').disabled = false;
+                };
+            </script>
+        </article>
+    </body>
+</html>
