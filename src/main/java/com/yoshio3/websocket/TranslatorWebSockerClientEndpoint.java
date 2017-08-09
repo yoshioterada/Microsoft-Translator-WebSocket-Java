@@ -82,11 +82,12 @@ public class TranslatorWebSockerClientEndpoint {
     
     @OnMessage
     public void onMessage(MessageDataFromTranslator message) throws IOException {
-        LOGGER.log(Level.INFO, "MS-Translator : {0}", message);
+        LOGGER.log(Level.INFO, "MS-Translator : {0} ", message);
         JsonObject jsonObj = Json.createObjectBuilder()
+                .add("type", message.getType())
                 .add("origin", message.getRecognition())
                 .add("translated", message.getTranslation())
                 .build();
-        soundUpWebSocketSession.getBasicRemote().sendText(jsonObj.toString());        
+        soundUpWebSocketSession.getBasicRemote().sendText(jsonObj.toString());
     }
 }

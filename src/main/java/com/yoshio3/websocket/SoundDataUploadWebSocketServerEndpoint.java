@@ -16,22 +16,21 @@
 package com.yoshio3.websocket;
 
 import com.yoshio3.sounds.SoundUtil;
+import com.yoshio3.sounds.StreamMSTranslateSender;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.websocket.CloseReason;
-import javax.websocket.ContainerProvider;
 import javax.websocket.DeploymentException;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
-import javax.websocket.WebSocketContainer;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
@@ -42,17 +41,19 @@ import javax.websocket.server.ServerEndpoint;
 @ServerEndpoint("/uploadSoundWebSocketEndpoint/{from}/{to}")
 public class SoundDataUploadWebSocketServerEndpoint {
 
-    private static final String TRANSLATOR_WEBSOCKET_ENDPOINT = "wss://dev.microsofttranslator.com/speech/translate?";
-    private static final byte[] SILENCE_BYTE = new byte[32000];
-    private static final int SEND_BUFFER_SIZE = 64000;
     private static final Logger LOGGER = Logger.getLogger(SoundDataUploadWebSocketServerEndpoint.class.getPackage().getName());
 
-    private String microsoftTranslatorURI;
+    @EJB
+    StreamMSTranslateSender receiver;
 
     @OnOpen
     public void onOpen(@PathParam("from") String from, @PathParam("to") String to, Session session) {
-        microsoftTranslatorURI = TRANSLATOR_WEBSOCKET_ENDPOINT + "from=" + from + "&to=" + to + "&api-version=1.0";
-        LOGGER.log(Level.INFO, "SoundDataUploadWebSocketServerEndpoint Open WebSocket Connection");
+        try {
+            LOGGER.log(Level.INFO, "SoundDataUploadWebSocketServerEndpoint Open WebSocket Connection");
+            receiver.enable(from,to,session);
+        } catch (URISyntaxException | DeploymentException | IOException ex) {
+            Logger.getLogger(SoundDataUploadWebSocketServerEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -66,39 +67,40 @@ public class SoundDataUploadWebSocketServerEndpoint {
      * @throws InterruptedException
      */
     @OnMessage
-    public void onMessage(ByteBuffer message, Session session) throws URISyntaxException, DeploymentException, IOException, InterruptedException {
+    public void onMessage(ByteBuffer message, Session session) throws URISyntaxException, DeploymentException, IOException, InterruptedException, UnsupportedAudioFileException {
         LOGGER.log(Level.FINE, "SoundDataUploadWebSocketServerEndpoint onMessage{0}", message);
         sendSoundDataToMicrosoftTranslator(session, message);
     }
 
     @OnClose
     public void onClose(Session session, CloseReason reason) {
-        LOGGER.log(Level.FINE, "SoundDataUploadWebSocketServerEndpoint Close WebSocket Connection : ", reason.getReasonPhrase());
+        try {
+            receiver.disable();
+            LOGGER.log(Level.FINE, "SoundDataUploadWebSocketServerEndpoint Close WebSocket Connection : ", reason.getReasonPhrase());
+        } catch (IOException ex) {
+            Logger.getLogger(SoundDataUploadWebSocketServerEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @OnError
     public void onError(Session session, Throwable t) {
-        LOGGER.log(Level.SEVERE, "SoundDataUploadWebSocketServerEndpoint onError()", t);
+        try {
+            receiver.disable();
+            LOGGER.log(Level.SEVERE, "SoundDataUploadWebSocketServerEndpoint onError()", t);
+        } catch (IOException ex) {
+            Logger.getLogger(SoundDataUploadWebSocketServerEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void sendSoundDataToMicrosoftTranslator(Session soundUpSession, ByteBuffer message) throws DeploymentException, IOException, InterruptedException, URISyntaxException {
-
         LOGGER.log(Level.FINE, "MSG CAPACITY : {0}", message.capacity());
         byte[] originalSoundData = message.array();
         try {
             SoundUtil soundUtil = new SoundUtil();
-            byte[] monoSound = soundUtil.convertMonoralSound(originalSoundData);
-            if (monoSound != null) {
-                URI serverEndpointUri = new URI(microsoftTranslatorURI);
-                WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-                Session translatorSession = container.connectToServer(new TranslatorWebSockerClientEndpoint(soundUpSession), serverEndpointUri);
+            // Convert 4.41 Khz -> 1.6Khz; Stereo -> Mono;
+            byte[] monoSound = soundUtil.convertPCMDataFrom41KStereoTo16KMonoralSound(originalSoundData);
 
-                translatorSession.getBasicRemote().sendBinary(ByteBuffer.wrap(monoSound));
-                for (int i = 0; i < 10; i++) {
-                    translatorSession.getBasicRemote().getSendStream().write(SILENCE_BYTE);
-                }
-            }
-
+            receiver.receivedBytes(monoSound);
         } catch (UnsupportedAudioFileException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }

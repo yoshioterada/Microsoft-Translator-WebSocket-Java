@@ -115,6 +115,7 @@
             <section class="experiment">
                 <div id="messages" class="messages">
                     <div>Result of Real Time Translation</div>
+                    <div id="partial" class="partial"></div>
                     <div id="insertpos" class="insertpos"></div>
                 </div>                
             </section>
@@ -123,7 +124,7 @@
             <script>
                 var websocket = null;
                 var mediaRecorder;
-                var timeInterval = 10000;
+                var timeInterval = 3000;
 
                 function captureUserMedia(mediaConstraints, successCallback, errorCallback) {
                     navigator.mediaDevices.getUserMedia(mediaConstraints).then(successCallback).catch(errorCallback);
@@ -141,6 +142,10 @@
                     mediaRecorder.stop();
                     mediaRecorder.stream.stop();
                     document.querySelector('#start-recording').disabled = false;
+                    if (websocket !== null) {
+                        websocket.close();
+                        websocket = null;
+                    }
                 };
 
                 document.getElementById("from-lang").onchange = function () {
@@ -188,16 +193,20 @@
 
                 /* テーブルにメッセージの書き込み */
                 function writeToScreen(event) {
+                    var obj = JSON.parse(event.data);
                     var element = document.createElement('div');
                     element.className = "message";
-                    var obj = JSON.parse(event.data);
-
                     element.textContent = obj.origin + ' : ' + obj.translated;
                     element.style.backgroundColor = "white";
-                    //メッセージの挿入位置（最新情報を先頭に記  載）
-                    var objBody = document.getElementById("insertpos");
-                    objBody.insertBefore(element, objBody.firstChild);
-                    // body要素にdivエレメントを追加 
+
+                    if (obj.type === "partial") {
+                        var objBody = document.getElementById("partial");
+                        objBody.innerHTML = obj.origin
+                    } else if (obj.type === "final") {
+                        //メッセージの挿入位置（最新情報を先頭に記載）
+                        var objBody = document.getElementById("insertpos");
+                        objBody.insertBefore(element, objBody.firstChild);
+                    }
                 }
 
 
