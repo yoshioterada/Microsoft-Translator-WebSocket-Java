@@ -1,10 +1,10 @@
 # Microsoft Translator Java Web Socket Application.
 
-Video (English to Japanese) : [Link of Demo Video](https://www.youtube.com/watch?v=w3IBKvA0vuQ).
-[![](https://img.youtube.com/vi/w3IBKvA0vuQ/0.jpg)](https://www.youtube.com/watch?v=w3IBKvA0vuQ)
+Video (English to Japanese) : [Link of Demo Video](https://www.youtube.com/watch?v=w3IBKvA0vuQ).  
+[![](https://img.youtube.com/vi/w3IBKvA0vuQ/0.jpg)](https://www.youtube.com/watch?v=w3IBKvA0vuQ)  
 
-Video (Japanese to English) : [Link of Demo Video](https://www.youtube.com/watch?v=u7oIap52PrM).
-[![](http://img.youtube.com/vi/u7oIap52PrM/0.jpg)](https://www.youtube.com/watch?v=u7oIap52PrM)
+Video (Japanese to English) : [Link of Demo Video](https://www.youtube.com/watch?v=u7oIap52PrM).  
+[![](http://img.youtube.com/vi/u7oIap52PrM/0.jpg)](https://www.youtube.com/watch?v=u7oIap52PrM)  
 
 ## 1. Please change the propertis file 
 
