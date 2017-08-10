@@ -124,7 +124,7 @@
             <script>
                 var websocket = null;
                 var mediaRecorder;
-                var timeInterval = 3000;
+                var timeInterval = 1000;
 
                 function captureUserMedia(mediaConstraints, successCallback, errorCallback) {
                     navigator.mediaDevices.getUserMedia(mediaConstraints).then(successCallback).catch(errorCallback);
