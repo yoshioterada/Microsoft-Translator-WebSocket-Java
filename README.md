@@ -1,7 +1,7 @@
 # Microsoft Translator Java Web Socket Application.
 
-Video (English to Japanese) : [Link of Demo Video](https://www.youtube.com/watch?v=w3IBKvA0vuQ).  
-[![](https://img.youtube.com/vi/w3IBKvA0vuQ/0.jpg)](https://www.youtube.com/watch?v=w3IBKvA0vuQ)  
+Video (English to Japanese) : [Link of Demo Video](https://youtu.be/WmCg5I3h61U).  
+[![](https://img.youtube.com/vi/WmCg5I3h61U/0.jpg)](https://www.youtube.com/watch?v=w3IBKvA0vuQ)  
 
 Video (Japanese to English) : [Link of Demo Video](https://www.youtube.com/watch?v=u7oIap52PrM).  
 [![](http://img.youtube.com/vi/u7oIap52PrM/0.jpg)](https://www.youtube.com/watch?v=u7oIap52PrM)  
