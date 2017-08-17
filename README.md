@@ -56,3 +56,7 @@ Then you will be able to see the Microsoft Translator Web Application Top Page.
 If you upload the application to Cloud and if you would like to  use the Chorome, you need to deploy it on HTTPS available server. Firefox may be available on Cloud too.
 And you may face some issue. Now I'm investigating. So please try to this on your local machine?**
 
+
+## 5. More Detail of this Application
+
+[Detail Explanation by Japanese ](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/ExplanationOfImplementation-ja.md)
