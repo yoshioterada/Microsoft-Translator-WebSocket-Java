@@ -40,20 +40,35 @@ import javax.websocket.WebSocketContainer;
 public class StreamMSTranslateSender {
 
     private final BlockingQueue<byte[]> audioQueue = new ArrayBlockingQueue<>(256);
-    private ExecutorService newSingleThreadExecutor ;
+    private ExecutorService newSingleThreadExecutor;
 
     private static final String TRANSLATOR_WEBSOCKET_ENDPOINT = "wss://dev.microsofttranslator.com/speech/translate?features=partial&";
-    private Session session;
+    private Session sessionForSoundDataUploadWebSocketServerEndpoint;
     private Session translatorSession;
     private boolean isRunning = false;
 
-    public void enable(String from, String to, Session session) throws IOException, URISyntaxException, DeploymentException {
-        String microsoftTranslatorURI = TRANSLATOR_WEBSOCKET_ENDPOINT + "from=" + from + "&to=" + to + "&api-version=1.0";
+    /**
+     * Enable Microsoft Translator Sender 
+     * @param from: From Language (ex. : en-US)
+     * @param to: To Language (ex.: ja-JP)
+     * @param sessionForSoundDataUploadWebSocketServerEndpoint WebSocket Session of SoundDataUploadWebSocketServerEndpoint (not TranslatorWebSockerClientEndpoint)
+     * @throws IOException
+     * @throws URISyntaxException
+     * @throws DeploymentException 
+     */
+    public void enable(String from, String to, Session sessionForSoundDataUploadWebSocketServerEndpoint) throws IOException, URISyntaxException, DeploymentException {
+        StringBuilder strBuilder = new StringBuilder();
+        String microsoftTranslatorURI = strBuilder.append(TRANSLATOR_WEBSOCKET_ENDPOINT)
+                .append("from=")
+                .append(from)
+                .append("&to=")
+                .append(to)
+                .append("&api-version=1.0")
+                .toString();
 
         URI serverEndpointUri = new URI(microsoftTranslatorURI);
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-        this.translatorSession = container.connectToServer(new TranslatorWebSockerClientEndpoint(session), serverEndpointUri);
-        this.session = session;
+        this.translatorSession = container.connectToServer(new TranslatorWebSockerClientEndpoint(sessionForSoundDataUploadWebSocketServerEndpoint), serverEndpointUri);
         isRunning = true;
 
         SoundUtil soundUtil = new SoundUtil();
@@ -64,9 +79,9 @@ public class StreamMSTranslateSender {
 
     public void disable() throws IOException {
         isRunning = false;
-        session.close();
+        sessionForSoundDataUploadWebSocketServerEndpoint.close();
         translatorSession.close();
-        this.session = null;
+        this.sessionForSoundDataUploadWebSocketServerEndpoint = null;
         newSingleThreadExecutor.shutdown();
         System.out.println("EJB END");
     }
