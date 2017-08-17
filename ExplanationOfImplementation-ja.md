@@ -16,7 +16,7 @@
 フロントエンドの実装を今回は HTML/JavaScript を用いて実装していますが、WebSocket のクライアントであれば実装は JavaFX であっても、.Net アプリケーションでも任意のプログラミング言語で実装しても構いません。  
 また、サーバの実装は Java の WebSocket ライブラリを利用して実装していますが、Microsoft Translator へのリクエストのノウハウが理解できれば他のプログラミング言語を使用して実装する事も可能かと思います。
 
-##2. サーバ側: Translator接続 WebSocket Client 実装の概要
+## 2. サーバ側: Translator接続 WebSocket Client 実装の概要
 
  1. 接続 URL の作成
  2. Authorization ヘッダの作成
@@ -28,7 +28,7 @@
 ----
 Microsoft Translator は<A HREF="http://docs.microsofttranslator.com/speech-translate.html">リファレンス・ガイド</A>にもあるように WebSocket で通信を行います。  
 
-###1. 接続 URL の作成  
+### 1. 接続 URL の作成  
 Microsoft Translator へ接続するための URL を作成します。from で元の言語を指定し、to で翻訳する言語を指定します。たとえば英語から日本語への翻訳を行いたい場合の WebSocket 接続 URL は下記のようになります。  
 
 wss://dev.microsofttranslator.com/speech/translate?features=partial&from=en-US&to=ja-JP&api-version=1.0;  
@@ -51,7 +51,7 @@ wss://dev.microsofttranslator.com/speech/translate?features=partial&from=en-US&t
 URL を指定する際、<b>features</b> パラメータを設定すると、追加情報を取得することができます。例えば最終的な翻訳結果だけではなく、部分的な翻訳結果を取得したい場合、features=partial を取得します。また、翻訳された結果を音声化したい場合は、features=TextToSpeech を付加します。  
 （今回の実装では音声化までは不要なので、TextToSpeech は省略しています。）  
 
-###2. Authorization ヘッダの作成  
+### 2. Authorization ヘッダの作成  
 上記で作成した Microsoft Translator の URL に対して接続するためには、ヘッダにアクセス・トークンを付加し認証する必要があります。  
 
 ```
@@ -73,7 +73,7 @@ $ curl -X POST
 ここで、HTTP ヘッダに付加する "Ocp-Apim-Subscription-Key: "の "{SUBSCRIPTION_KEY}" の値は、Azure の管理ポータルなどから Microsoft Translator 用のサービスを作成した際に自動的に生成され、Azure 管理ポータルから取得する事ができます。
 
 
-####2.1 Subscription Key の取得
+#### 2.1 Subscription Key の取得
 Microsoft Azure の管理ポータルより、Microsoft Translator 用のサービス (Translator-Speach-API) を作成してください。作成したのち "Translator-Speach-API" のリソースを選択してください。選択すると下記の画面が表示されます。
 
 ![Image](https://c1.staticflickr.com/5/4385/36229070970_a746117f9b.jpg)
@@ -85,7 +85,7 @@ Microsoft Azure の管理ポータルより、Microsoft Translator 用のサー�
 ここで "KEY 1", "KEY 2" のテキストフィールド内に表示されているランダムな文字列が Subscription Key になります。ここに記載されている内容を、”Ocp-Apim-Subscription-Key:” ヘッダに付加します。
 
 
-####2.2 Access Token の取得
+#### 2.2 Access Token の取得
 
 Subscription Key を入手したので、実際に Access Token を入手することができるようになりました。入手した Subscription Key を指定して Access Token を実際に入手してみてください。
 
@@ -99,7 +99,8 @@ eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6Imh0dHBzOi8vZGV2Lm1pY
 **********************************************************************  
 **********************************************************************  
 **********************************************************************  
-**********************************************************************  **********************************************************************  
+**********************************************************************  
+**********************************************************************  
 **********************************************************************  
 **********************************************************************  
 **********************************************************************  
@@ -107,7 +108,7 @@ eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6Imh0dHBzOi8vZGV2Lm1pY
 QDAChEx0PKxQ5ZGtArRi-Ok 
 ```
 
-####2.3 Authorization ヘッダの例
+#### 2.3 Authorization ヘッダの例
 上記より、アクセス・トークンを入手できましたので、Microsoft Translator に対して接続するためのヘッダが作成できます。  
 実際の Authorization ヘッダは下記のような内容になります。
 
@@ -116,7 +117,8 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6Imh0dHBzO
 **********************************************************************  
 **********************************************************************  
 **********************************************************************  
-**********************************************************************  **********************************************************************  
+**********************************************************************  
+**********************************************************************  
 **********************************************************************  
 **********************************************************************  
 **********************************************************************  
@@ -125,7 +127,7 @@ QDAChEx0PKxQ5ZGtArRi-Ok
 ```  
 
 
-###3. X-ClientTraceId: {GUID} ヘッダの作成  
+### 3. X-ClientTraceId: {GUID} ヘッダの作成  
 X-ClientTraceId はトラブルシューティングを行う際に利用できます。クライアント側はこの値をヘッダに付加し Microsoft Translator に接続してください。また、この ID はログ等に保存し、あとで参照できるようにしてください。
 
 
@@ -135,7 +137,7 @@ X-ClientTraceId はトラブルシューティングを行う際に利用でき�
 X-ClientTraceId: {UUID}
 ```  
 
-###4. 音声データの送信  
+### 4. 音声データの送信  
 上記 1-3 を生成後、Microsoft Translator に対して WebSocket で接続すると翻訳 (音声→テキスト) ができるようになります。  
 
 送信する音声データは、 wav 形式のデータを送信するのですが、送信する音声データは下記のフォーマットに従う必要があります。  
@@ -154,6 +156,6 @@ X-ClientTraceId: {UUID}
 
 上記実装方法の概要を理解したのち、下記 Java での実装の詳細をご覧ください。
 
-* [Java による実装の詳細 Part1(日本語)](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/ExplanationOfImplebyJava-1.md)  
-* [Java による実装の詳細 Part2(日本語)](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/ExplanationOfImplebyJava-2.md)
+* [Java による実装の詳細 Part1(日本語)](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImplebyJava-1.md)  
+* [Java による実装の詳細 Part2(日本語)](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImplebyJava-2.md)
 
