@@ -50,7 +50,7 @@ public class SoundDataUploadWebSocketServerEndpoint {
     public void onOpen(@PathParam("from") String from, @PathParam("to") String to, Session session) {
         try {
             LOGGER.log(Level.INFO, "SoundDataUploadWebSocketServerEndpoint Open WebSocket Connection");
-            receiver.enable(from,to,session);
+            receiver.enable(from, to, session);
         } catch (URISyntaxException | DeploymentException | IOException ex) {
             Logger.getLogger(SoundDataUploadWebSocketServerEndpoint.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -97,9 +97,13 @@ public class SoundDataUploadWebSocketServerEndpoint {
         byte[] originalSoundData = message.array();
         try {
             SoundUtil soundUtil = new SoundUtil();
-            // Convert 4.41 Khz -> 1.6Khz; Stereo -> Mono;
-            byte[] monoSound = soundUtil.convertPCMDataFrom41KStereoTo16KMonoralSound(originalSoundData);
-
+            byte[] monoSound;
+            if (soundUtil.is16KMonoralSound(originalSoundData)) {
+                monoSound = soundUtil.trimWAVHeader(originalSoundData);
+            } else {
+                // Convert 4.41 Khz -> 1.6Khz; Stereo -> Mono;
+                monoSound = soundUtil.convertPCMDataFrom41KStereoTo16KMonoralSound(originalSoundData);
+            }
             receiver.receivedBytes(monoSound);
         } catch (UnsupportedAudioFileException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
