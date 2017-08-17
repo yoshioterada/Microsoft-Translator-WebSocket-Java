@@ -39,7 +39,7 @@ public class TranslatorWebSocketClientEndpointConfigurator extends ClientEndpoin
         });
         String uuid = UUID.randomUUID().toString();
         headers.put("X-ClientTraceId", Arrays.asList(uuid));
-        LOGGER.log(Level.INFO, "Request UUID: {0}", uuid);
+        LOGGER.log(Level.INFO, "X-ClientTraceId: {0}", uuid);
     }
 
     @Override
