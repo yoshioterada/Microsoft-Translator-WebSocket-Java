@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -85,6 +86,27 @@ public class SoundUtil {
         return bOut.toByteArray();
     }    
 
+//    public boolean is16KMonoralSound(AudioInputStream inStream) {
+    public boolean is16KMonoralSound(byte[] soundData) throws UnsupportedAudioFileException, IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(soundData);
+        AudioInputStream sourceStream = AudioSystem.getAudioInputStream(bais);
+        long frameLength = sourceStream.getFrameLength();
+        AudioFormat format = sourceStream.getFormat();
+
+        int sampleSizeInBits = format.getSampleSizeInBits();
+        float frameRate = format.getFrameRate();
+        int channels = format.getChannels();
+
+        return sampleSizeInBits == BIT_PER_SAMPLE
+                && frameRate == SAMPLERATE
+                && channels == CHANNEL;
+    }
+    
+    public byte[] trimWAVHeader(byte[] origin){       
+        return Arrays.copyOfRange(origin, WAV_HEADER_SIZE ,origin.length - WAV_HEADER_SIZE);
+    }
+    
+    
     /**
      *
      * @param sourceStream
