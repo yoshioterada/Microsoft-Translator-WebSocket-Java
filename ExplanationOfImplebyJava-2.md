@@ -9,7 +9,7 @@
 上記ではブラウザからと記述していますが、今回実装する WebSocket サーバは任意の WebSocket クライアントから接続ができます。***
 
 
-##1.WebSocket クライアントから音声データを取得する WebSocket サーバの実装
+## 1.WebSocket クライアントから音声データを取得する WebSocket サーバの実装
 
 実装する WebSocket サーバは、URL のパスで翻訳元の言語(FROM)、と翻訳先の言語(TO)を指定し呼び出しを行います。
 
@@ -169,7 +169,7 @@ private ManagedExecutorService executor;
 receiver.disable();
 ```
 
-##2.クライアントに翻訳結果を送信
+## 2.クライアントに翻訳結果を送信
 
 ![Response-From-Translator](https://c1.staticflickr.com/5/4347/36456812462_81bd1f00bb.jpg)
 

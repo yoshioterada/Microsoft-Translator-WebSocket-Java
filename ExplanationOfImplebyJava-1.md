@@ -13,7 +13,7 @@ Microsoft Translator へ接続し、音声データの送信、翻訳結果の�
 ![Server-Impl](https://c1.staticflickr.com/5/4342/36625812485_009363be97.jpg)
 ----
 
-##1. 接続 URL の作成  
+## 1. 接続 URL の作成  
 
 翻訳元の言語 (FROM) と翻訳先の言語 (TO) をメソッドの引数で指定し、様々な言語を選択できるように実装します。[StreamMSTranslateSender#enable() で実装](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/src/main/java/com/yoshio3/sounds/StreamMSTranslateSender.java)  
 
@@ -34,13 +34,13 @@ public void enable(String from, String to, Session sessionForSoundDataUploadWebS
     // Continue ... 
 }
 ```  
-##2. Authorization ヘッダの作成  
+## 2. Authorization ヘッダの作成  
 Authentication Token を取得するためには前述したように、[Authentication Token API for Microsoft Cognitive Services Translator API](http://docs.microsofttranslator.com/oauth-token.html) に記載されている方法で取得します。
 
-###2.1 Subscription Key の取得
+### 2.1 Subscription Key の取得
 Azure の管理ポータルから新規に Cognitive Service -> Microsoft Translator を作成します。次に作成した Microsoft Translator から接続用のアクセス・キー (SUBSCRIPTION_KEY) を取得してください。
 
-###2.2 Access Token の取得
+### 2.2 Access Token の取得
 
 次に、JAX-RS Client API を利用し下記の URL に接続します。  
 
@@ -84,7 +84,7 @@ public class AuthTokenService {
 }
 ```
 
-##3. X-ClientTraceId: {GUID} ヘッダの作成
+## 3. X-ClientTraceId: {GUID} ヘッダの作成
 
 次に X-ClientTranceId ヘッダを作成します。こちらは UUID の値を作成し設定します。
 
@@ -93,7 +93,7 @@ String uuid = UUID.randomUUID().toString();
 ```
 
 
-##4. 音声データの送信
+## 4. 音声データの送信
 
 上記 1-3 で、Microsoft Translator に対して接続するために必要な URL, Authentication Token, X-ClientTraceId 情報が揃いました。
 
@@ -228,7 +228,7 @@ container.connectToServer(new TranslatorWebSockerClientEndpoint(session),
 TranslatorWebSockerClientEndpoint (session) でコンストラクタに session を指定していますが、これは、後ほど実装する別の WebSocket セッションです (ブラウザ等のクライアントと連携するための実装 [SoundDataUploadWebSocketServerEndpoint](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/src/main/java/com/yoshio3/websocket/SoundDataUploadWebSocketServerEndpoint.java) )。単一の Java アプリケーションから Microsoft Translator と接続する場合は、この session は不要です。***
 
 
-###4.3 Microsoft Translator へ音声データの送信
+### 4.3 Microsoft Translator へ音声データの送信
 
 上記で、Microsoft Translator と接続が正常に完了すると、返り値として Session (translatorSession) が生成されます。
 
@@ -245,7 +245,7 @@ public void sendToMicrosoftTranslator(ByteBuffer byteBuff) throws IOException {
 }
 ```
 
-###4.4 ストリーミングデータとして送信
+### 4.4 ストリーミングデータとして送信
 
 上記の sendToMicrosoftTranslator() メソッドに対して、wav ファイルのバイナリデータを渡すことで、Translator に音声を送信することができるようになりました。しかし wav ファイルを個別に送信する場合は、問題が発生する場合があります。
 
@@ -319,7 +319,7 @@ public class SoundUtil {
 ```
 
 
-###4.5 サンプリング周波数とモノラル・サウンドへの変換
+### 4.5 サンプリング周波数とモノラル・サウンドへの変換
 Java で音声データを操作するためには、Java Sound API を利用します。Sound API を利用すると、サンプリング周波数やチャネル等をかんたんに確認したり変更できます。  
 サンプリング周波数が 16KHz で、モノラルサウンドか否かを確認するのは、is16KMonoralSound() メソッドで実装しています。また、サンプリング周波数を 44.1 KHz から 16 Khz 、ステレオからモノラル・サウンドに変換している箇所は、convertedByte41KStereoTo16KMonoralSound() メソッドで実装しています。
 
@@ -370,4 +370,4 @@ public class SoundUtil {
 
 ここから先の実装は、クライアントの実装方法に応じて異なる内容になります。仮にJavaFX や .Net などのスタンドアローンのアプリケーションとして実装する場合、別途、そのスタンドアローン実装内で、音声データをどのように扱うかをご検討ください。
 
-[Part2 へと続く](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/ExplanationOfImplebyJava-2.md)
+[Part2 へと続く](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImplebyJava-2.md)
