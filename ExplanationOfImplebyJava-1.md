@@ -40,6 +40,13 @@ Authentication Token を取得するためには前述したように、[Authent
 ### 2.1 Subscription Key の取得
 Azure の管理ポータルから新規に Cognitive Service -> Microsoft Translator を作成します。次に作成した Microsoft Translator から接続用のアクセス・キー (SUBSCRIPTION_KEY) を取得してください。
 
+
+![Image](https://c1.staticflickr.com/5/4385/36229070970_a746117f9b.jpg)
+
+"RESOURCE MANAGEMENT" の "Kyes" から取得します。
+
+![Image](https://c1.staticflickr.com/5/4368/36487708461_0de0b4ae79.jpg)
+
 ### 2.2 Access Token の取得
 
 次に、JAX-RS Client API を利用し下記の URL に接続します。  
@@ -181,14 +188,6 @@ public class TranslatorWebSockerClientEndpoint {
                 .add("translated", message.getTranslation())
                 .build();
         soundUpWebSocketSession.getBasicRemote().sendText(jsonObj.toString());
-        
-        /* soundUpWebSocketSession.getOpenSessions().forEach(clientSession -> {
-            try {
-                clientSession.getBasicRemote().sendText(jsonObj.toString());
-            } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
-            }
-        }); */
     }
 }
 ```
