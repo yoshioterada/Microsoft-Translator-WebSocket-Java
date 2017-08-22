@@ -156,6 +156,7 @@ X-ClientTraceId: {UUID}
 
 上記実装方法の概要を理解したのち、下記 Java での実装の詳細をご覧ください。
 
-* [Java による実装の詳細 Part1(日本語)](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImplebyJava-1.md)  
-* [Java による実装の詳細 Part2(日本語)](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImplebyJava-2.md)
+* [Java によるサーバ・サイド実装の詳細 Part1(日本語)](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImplebyJava-1.md)  
+* [Java によるサーバ・サイド実装の詳細 Part2(日本語)](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImplebyJava-2.md)
 
+* [JavaScript によるフロントエンド実装の詳細 Part3(日本語)](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImpleByJavaScript.md)
