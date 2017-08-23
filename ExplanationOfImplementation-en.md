@@ -165,8 +165,6 @@ In terms of transmitting audio data, wav data can be sent one at a time, but you
 
 After you have an overview of the above implementation, learn more about the implementation in Java below.
 
-Java server-side Implementation Details Part1 (Japanese)
-
-Java server-side Implementation Details PART2 (Japanese)
-
-Learn more about Frontend implementations with JavaScript Part3 (Japanese)
+1. [Java server-side Implementation Details Part1 (English)](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImplebyJava-1-en.md)  
+2. [Java server-side Implementation Details PART2 (English)](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImplebyJava-2-en.md)  
+3. [Frontend implementations by JavaScript PART3 (English)](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImpleByJavaScript-en.md)

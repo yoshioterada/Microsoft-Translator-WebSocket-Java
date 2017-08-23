@@ -59,4 +59,5 @@ And you may face some issue. Now I'm investigating. So please try to this on you
 
 ## 5. More Detail of this Application
 
-[Detail Explanation by Japanese ](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImplementation-ja.md)
+[Detail Explanation by Japanese ](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImplementation-ja.md)  
+[Detail Explanation by English](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImplementation-en.md)
