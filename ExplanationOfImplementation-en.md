@@ -42,17 +42,17 @@ Currently (as of August 2017), the following languages are supported:
 
 |Supported language |values|
 |---|---|
-|Arabic| Ar-eg|
-|German| de|
-|Spanish| ES|
+|Arabic|ar-EG|
+|German| de-DE|
+|Spanish| es-ES|
 |English| en-US|
-|French| FR|
-|Italian| specifically|
-|Japanese| ja|
-|Portuguese| PT|
-|Russian| ru|
-|Chinese Simplified| ZH|
-|Chinese Traditional| ZH|
+|French| fr-FR|
+|Italian| it-IT|
+|Japanese| ja-JP|
+|Portuguese| pt-BR|
+|Russian| ru-RU|
+|Chinese Simplified| zh-CN|
+|Chinese Traditional| zh-TW|
 
 
 In the URL, you can set the "features" parameter to obtain additional information. For example, if you want to get partial translation results instead of just the final translation results, please specify  features=partial. If you want to voice the translated results, add features=Texttospeech.   
