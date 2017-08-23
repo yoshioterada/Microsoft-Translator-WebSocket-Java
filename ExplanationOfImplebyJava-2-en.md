@@ -202,3 +202,5 @@ The onMessage() method is invoked when the result of the translation is returned
 ```
 soundUpWebSocketSession.getBasicRemote().sendText(jsonObj.toString());
 ```
+
+[Next explanation Part3](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImpleByJavaScript-en.md)

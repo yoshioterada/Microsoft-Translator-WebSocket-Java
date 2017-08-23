@@ -371,5 +371,4 @@ The above is the implementation of the basic connection to the Microsoft Transla
 
 The implementation from this point will be different depending on how the client is implemented. If you are implementing it as a standalone application, such as JavaFX or .Net, you should consider how to handle voice data within that standalone implementation separately.
 
-
-[Continued to Part2] (https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImplebyJava-2-en.md)
+[Next explanation (Part2)](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImplebyJava-2-en.md)

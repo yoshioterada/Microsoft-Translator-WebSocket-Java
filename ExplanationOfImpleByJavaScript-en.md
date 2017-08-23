@@ -192,3 +192,6 @@ document.querySelector('#stop-recording').onclick = function () {
 This time, voice translation was done by recording the voice on the browser and sending it to the server.
 If you are implementing in a standalone application, you can send data to Microsoft Translator directly via Translatorwebsockerclientendpoint by creating audio data in sampling rate 16KHz, mono, 16bit, and receiving translation results when recording within an application.
 Depending on the type of application you are creating, choose the appropriate implementation method.***
+
+
+[Go Back to Top Page](https://github.com/yoshioterada/Microsoft-Translator-WebSocket-Java/blob/master/ExplanationOfImplementation-en.md)
